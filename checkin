@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+
+# Run from the project folder so Maven and the data files can be found.
+PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$PROJECT_DIR"
+
+exec ./mvnw -q compile org.codehaus.mojo:exec-maven-plugin:3.5.0:java \
+    -Dexec.mainClass=Main \
+    "-Dexec.args=$*"

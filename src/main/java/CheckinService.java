@@ -34,6 +34,7 @@ public class CheckinService {
             return true;
         }
 
+        // Count complete 24-hour periods, not calendar dates.
         long days = Duration.between(contact.lastContactUtc(), asOf).toDays();
         return days >= 7;
     }
@@ -51,6 +52,7 @@ public class CheckinService {
             score += 1;
         }
 
+        // Never-contacted members receive age and risk points only.
         if (contact != null) {
             if ("no_answer".equals(contact.outcome())) {
                 score += 1;
@@ -89,6 +91,7 @@ public class CheckinService {
             }
         }
 
+        // Highest score first, breaks ties using member ID value.
         recommendations.sort(
                 Comparator.comparingDouble(CheckinRecommendation::priorityScore)
                         .reversed()

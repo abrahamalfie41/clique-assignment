@@ -1,5 +1,5 @@
-import org.apache.commons.csv.CSVFormat;
 import com.google.gson.Gson;
+import org.apache.commons.csv.CSVFormat;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,8 +14,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class DataLoader {
+
     public List<Member> loadMembers(Path file) throws IOException {
         List<Member> members = new ArrayList<>();
+
         // Reads column names from the first row, skips first row.
         CSVFormat format = CSVFormat.DEFAULT.builder()
                 .setHeader()
@@ -24,7 +26,7 @@ public class DataLoader {
 
         // Row by row parsing of CSV file, trims whitespaces, constructs Member record.
         try (var reader = Files.newBufferedReader(file);
-             var rows = format.parse(reader)) {
+                var rows = format.parse(reader)) {
             for (var row : rows) {
                 Set<String> riskFlags = new HashSet<>();
                 for (String flag : row.get("risk_flags").split(";")) {
@@ -42,18 +44,20 @@ public class DataLoader {
                 members.add(member);
             }
         }
+
         return members;
     }
 
     public Map<Long, Contact> loadContacts(Path file) throws IOException {
         Map<Long, Contact> contacts = new HashMap<>();
+
         CSVFormat format = CSVFormat.DEFAULT.builder()
                 .setHeader()
                 .setSkipHeaderRecord(true)
                 .build();
 
         try (var reader = Files.newBufferedReader(file);
-             var rows = format.parse(reader)) {
+                var rows = format.parse(reader)) {
             for (var row : rows) {
                 Contact contact = new Contact(
                         Long.parseLong(row.get("member_id").trim()),
@@ -66,21 +70,26 @@ public class DataLoader {
                 }
             }
         }
+
         return contacts;
     }
 
     public Set<LocalDate> loadHolidays(Path file) throws IOException {
         Set<LocalDate> holidays = new HashSet<>();
+
         try (var reader = Files.newBufferedReader(file)) {
             // Converts JSON strings to Java dates.
             String[] dates = new Gson().fromJson(reader, String[].class);
+
             if (dates == null) {
                 throw new IllegalArgumentException("Holiday file must contain a JSON date array");
             }
+
             for (String date : dates) {
                 holidays.add(LocalDate.parse(date));
             }
         }
+
         return holidays;
     }
 }
