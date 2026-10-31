@@ -5,6 +5,13 @@ set -eu
 PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cd "$PROJECT_DIR"
 
+# Maven parses a single argument string; quote each original argument separately.
+CHECKIN_ARGS=
+for arg in "$@"; do
+    quoted_arg=$(printf '%s' "$arg" | sed "s/'/'\"'\"'/g")
+    CHECKIN_ARGS="$CHECKIN_ARGS '$quoted_arg'"
+done
+
 exec ./mvnw -q compile org.codehaus.mojo:exec-maven-plugin:3.5.0:java \
     -Dexec.mainClass=Main \
-    "-Dexec.args=$*"
+    "-Dexec.args=$CHECKIN_ARGS"

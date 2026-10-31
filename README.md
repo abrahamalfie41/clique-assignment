@@ -1,14 +1,18 @@
-# Clique check-in assignment
+# Clique Check-in assignment
 
 A Java command line program that reads `data/` and lists members due for a check-in, ordered by priority.
 
 ## Run
 
 Requires JDK 17+ and internet on the first run.
-The included Maven wrapper handles Maven installation and dependencies.
+Maven does not need to be installed separately. The included wrapper downloads Maven on the first run, and Maven downloads the project dependencies.
+The launcher starts Maven and checks compilation on each run, so startup has some overhead. 
 
 Maven manages JUnit 5, Commons CSV, and Gson, and runs all tests with one command.
-Codex was used to add the Maven wrapper and help write the tests.
+Codex helped set up the Maven wrapper and launchers, implement application code,
+and write tests.
+
+Run the following commands from the repository root.
 
 macOS/Linux:
 
@@ -40,6 +44,8 @@ sorting, recommended windows, result limits, and CSV export.
 
 - Use UTC and complete elapsed 24-hour days. Members qualify after at least seven
   days, or immediately if never contacted. Holidays and blank channels exclude members.
+- Evaluate all members using the current time captured once per run. Recommend
+  morning for members aged 80 or above, and afternoon for everyone else.
 - Score: discharge +3, living alone +2, age ≥80 +1, `no_answer` +1, plus days / 7.0.
   Never-contacted members receive only age and risk points; `escalate` adds nothing.
 - Sort by full score descending. If scores are equal, break ties by numeric member
@@ -65,4 +71,5 @@ are overwritten; the destination directory must already exist.
 
 ## Next improvements
 
+- **Filter by channel:** Show only members who prefer calls, SMS, or WhatsApp.
 - **Runnable JAR:** Run the program without starting Maven each time.
