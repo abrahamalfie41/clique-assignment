@@ -26,7 +26,9 @@ Windows (PowerShell or Command Prompt):
 .\checkin.cmd --top 5
 ```
 
-Defaults to five results. Zero prints only the header; negative values are rejected.
+Defaults to five results. Zero requests no members; negative values are rejected.
+Empty results include a short explanation. File errors report a message and exit
+with status 1 rather than displaying a Java stack trace.
 To use `checkin` without `./`, add the repository to your shell's PATH.
 
 ## Tests
@@ -38,13 +40,13 @@ To use `checkin` without `./`, add the repository to your shell's PATH.
 On Windows, use `.\mvnw.cmd test`.
 
 JUnit 5 tests cover data loading, eligibility boundaries, holidays, scoring,
-sorting, recommended windows, result limits, and CSV export.
+sorting, recommended windows, result limits, CSV export, and CLI messages.
 
 ## Assumptions
 
 - Use UTC and complete elapsed 24-hour days. Members qualify after at least seven
   days, or immediately if never contacted. Holidays and blank channels exclude members.
-- Evaluate all members using the current time captured once per run. Recommend
+- Use the same time for every member: the current time unless `--as-of` is supplied. Recommend
   morning for members aged 80 or above, and afternoon for everyone else.
 - Score: discharge +3, living alone +2, age ≥80 +1, `no_answer` +1, plus days / 7.0.
   Never-contacted members receive only age and risk points; `escalate` adds nothing.
@@ -55,9 +57,18 @@ sorting, recommended windows, result limits, and CSV export.
 `DataLoader` reads files, `CheckinService` applies the rules, and `Main` handles
 arguments and output.
 
-## Personal improvements
+## Extra features
 
-- **CSV export:** Save and share the prioritized check-in results while still
+- **Date override:** Use a fixed UTC timestamp for a demo with
+  the bundled 2025 data. Omit `--as-of` to use the current time.
+
+```sh
+./checkin --top 5 --as-of 2025-11-06T12:00:00Z
+```
+
+On Windows, use `.\checkin.cmd` with the same arguments.
+
+- **CSV export:** Save and share the check-in list results while still
   displaying them in the console.
 
 ```sh
@@ -72,4 +83,4 @@ are overwritten; the destination directory must already exist.
 ## Next improvements
 
 - **Filter by channel:** Show only members who prefer calls, SMS, or WhatsApp.
-- **Runnable JAR:** Run the program without starting Maven each time.
+- **Runnable JAR:** Run the program without starting Maven each time. Reduces overhead, opens the door to a better user experience.
